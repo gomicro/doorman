@@ -50,20 +50,10 @@ coverage_compfriendly:  ## Generates the code coverage in a computer friendly ma
 	@$(GOCMD) tool cover -func=$(COVERAGE_DIR)/tmp/full.out | tail -n 1 | sed -e 's/^.*statements)[[:space:]]*//' -e 's/%//'
 
 .PHONY: deploy
-deploy: dockerize push_image  ## Deploys the service
-
-.PHONY: dockerize
-dockerize:  ## Create a docker image of the project
-	docker build \
-		-t $(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_LABEL) .
-
-.PHONY: gcr_login
-gcr_login:  ## Login to the GCR image repo
-	docker login -u _json_key -p "$$(cat $(HOME)/.gcp/keyfile.json)" https://us.gcr.io
-
-.PHONY: push_image
-push_image:  ## Push the latest docker image to the repo
-	docker push $(DOCKER_REPO)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_LABEL)
+deploy: ## Deploy the artifacts
+	@echo "Logging into Docker Hub"
+	-@echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
+	@ext/goreleaser release
 
 .PHONY: help
 help: ## Show This Help
