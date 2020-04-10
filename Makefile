@@ -77,5 +77,16 @@ unit_test:  ## Run unit tests
 	$(GOTEST)
 
 .PHONY: fmt
-fmt:  ## Run go fmt
-	$(GOFMT)
+fmt: ## Run gofmt
+	@echo "checking formatting..."
+	@$(GOFMT) $(shell $(GOLIST) ./... | grep -v '/vendor/')
+
+.PHONY: vet
+vet: ## Run go vet
+	@echo "vetting..."
+	@$(GOVET) $(shell $(GOLIST) ./... | grep -v '/vendor/')
+
+.PHONY: lint
+lint: ## Run golint
+	@echo "linting..."
+	@$(GOLINTCMD) -set_exit_status $(shell $(GOLIST) ./... | grep -v '/vendor/')
