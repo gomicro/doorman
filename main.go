@@ -17,8 +17,9 @@ const (
 )
 
 var (
-	config configuration
-	log    *ledger.Ledger
+	version string
+	config  configuration
+	log     *ledger.Ledger
 )
 
 type configuration struct {
@@ -50,12 +51,17 @@ func configure() {
 	log = ledger.New(os.Stdout, ledger.ParseLevel(config.LogLevel))
 	log.Debug("Logger configured")
 
+	if version == "" {
+		version = "local-dev"
+	}
+
 	steward.SetStatusEndpoint("/v1/status")
 
 	log.Info("Configuration complete")
 }
 
 func startService() error {
+	log.Infof("Starting service (%v)", version)
 	log.Infof("Listening on %v:%v", config.Host, config.Port)
 
 	http.Handle("/", registerEndpoints())
