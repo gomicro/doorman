@@ -27,7 +27,7 @@ func handleUserInfo(w http.ResponseWriter, r *http.Request) {
 	u, err := users.Lookup(token)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("bad request token"))
+		w.Write([]byte("bad request token")) //nolint,errcheck
 		return
 	}
 
@@ -35,12 +35,12 @@ func handleUserInfo(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		msg := fmt.Sprintf("failed to marshal user: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(msg))
+		w.Write([]byte(msg)) //nolint,errcheck
 		return
 	}
 
 	w.WriteHeader(200)
-	w.Write(b)
+	w.Write(b) //nolint,errcheck
 }
 
 func handleGetGoogleAuth(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +63,7 @@ func handleGetGoogleAuth(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 
 		msg := "state not base64 encoded"
-		w.Write([]byte(msg))
+		w.Write([]byte(msg)) //nolint,errcheck
 		return
 	}
 
@@ -76,7 +76,7 @@ func handleGetGoogleAuth(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Errorf("failed to parse redirect uri: %v", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("bad redirect uri"))
+		w.Write([]byte("bad redirect uri")) //nolint,errchecK
 		return
 	}
 
@@ -105,11 +105,11 @@ func handlePostGoogleAuth(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Errorf("failed to marshal token: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to marshal token"))
+		w.Write([]byte("failed to marshal token")) //nolint,errchecK
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(b)
+	w.Write(b) //nolint,errchecK
 }
