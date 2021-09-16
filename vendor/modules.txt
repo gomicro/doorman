@@ -1,0 +1,21 @@
+# github.com/franela/goblin v0.0.0-20210519012713-85d372ac71e2
+## explicit
+# github.com/gomicro/ledger v0.1.0
+## explicit
+github.com/gomicro/ledger
+# github.com/gomicro/penname v0.1.1
+## explicit
+# github.com/gomicro/steward v0.0.4
+## explicit
+github.com/gomicro/steward
+# github.com/gorilla/context v1.1.1
+## explicit
+github.com/gorilla/context
+# github.com/gorilla/mux v1.6.2
+## explicit
+github.com/gorilla/mux
+# github.com/kelseyhightower/envconfig v1.3.0
+## explicit
+github.com/kelseyhightower/envconfig
+# github.com/onsi/gomega v1.16.0
+## explicit
