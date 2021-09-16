@@ -15,6 +15,7 @@ CIRCLE_SHA1 ?= $(shell git rev-parse HEAD)
 
 BUILD_NUMBER ?= $(CIRCLE_BUILD_NUM)
 BUILD_VERSION := $(VERSION)-$(BUILD_NUMBER)
+DEPLOY_VERSION := $(shell echo $${GITHUB_REF/refs\/tags\//})
 GIT_COMMIT_HASH ?= $(CIRCLE_SHA1)
 JOB_ID ?= local
 
@@ -53,7 +54,7 @@ coverage_compfriendly:  ## Generates the code coverage in a computer friendly ma
 deploy: ## Deploy the artifacts
 	@echo "Logging into Docker Hub"
 	-@echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
-	@ext/goreleaser release
+	@VERSION=$(DEPLOY_VERSION) goreleaser release
 
 .PHONY: help
 help: ## Show This Help

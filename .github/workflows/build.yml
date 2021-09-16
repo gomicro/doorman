@@ -7,56 +7,33 @@ jobs:
     name: Linting
     runs-on: ubuntu-latest
 
-    env:
-      # https://github.com/actions/setup-go/issues/14
-      GOPATH: ${{ github.workspace }}
-      GOBIN: ${{ github.workspace }}/bin
-
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
 
-    - name: Install Go
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.13
-
-    - name: Setup
-      run: |
-        echo "::add-path::${GOBIN}"
-        go get -u golang.org/x/lint/golint
-
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
-        path: ./src/github.com/${{ github.repository }}
-
-    - name: Fmt, Vet, Lint
-      working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}
-      run: |
-        make fmt vet lint
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.29
 
   test:
     name: Test
     runs-on: ubuntu-latest
 
-    env:
-      GOPATH: ${{ github.workspace }}
-
     steps:
-
     - name: Install Go
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v2
       with:
-        go-version: 1.13
+        go-version: 1.16
 
     - name: Checkout
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
-        path: ./src/github.com/${{ github.repository }}
 
     - name: Test
-      working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}
       run: make test
 
   deploy:
@@ -66,7 +43,6 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
 
     env:
-      GOPATH: ${{ github.workspace }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -74,20 +50,19 @@ jobs:
     steps:
 
     - name: Install Go
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v2
       with:
-        go-version: 1.13
+        go-version: 1.16
 
     - name: Checkout
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
-        path: ./src/github.com/${{ github.repository }}
 
-    - name: Setup
-      run: |
-        echo "::set-env name=VERSION::${GITHUB_REF/refs\/tags\//}"
+    - name: Install GoReleaser
+      uses: goreleaser/goreleaser-action@v2
+      with:
+        install-only: true
 
     - name: Deploy
-      working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}
       run: make deploy
